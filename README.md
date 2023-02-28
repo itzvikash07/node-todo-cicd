@@ -36,12 +36,17 @@ Create a Dockerfile
 $ `sudo vi Dockerfile`
 
 6:
-
 Build the Image from the Dockerfile
 
-$ `sudo docker build -t my-node-app:latest .`
+$ `sudo docker build -t vikashkumar07/my-node-app:latest .`
 
-### Running the Container
+### Pushing the Image on DockerHub
+
+$ `sudo docker push vikashkumar07/my-node-app:latest`
+
+### Pulling Back the image & Running the Container
+
+$ `sudo docker pull vikashkumar07/my-node-app:latest`
 
 7:
 Run the image in Detach and restart mode by which Container will run even after the restart of EC2 Instance
