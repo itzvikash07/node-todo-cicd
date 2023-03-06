@@ -29,7 +29,7 @@ jobs:
           envs: BRANCH, BUILD_NUMBER
           script: |
             pwd
-            cd node-todo-cicd/
+            
             ls
             sudo docker build -t my-node-app:$BUILD_NUMBER .
             sudo docker stop my-node-app-container || true
