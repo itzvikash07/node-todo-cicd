@@ -32,7 +32,7 @@ jobs:
             cd node-todo-cicd/
             ls
             sudo docker build -t my-node-app:$BUILD_NUMBER .
-            sudo docker stop my-node-app-cont || true
-            sudo docker rm  my-node-app-cont || true
-            sudo docker run -d --name react-movie-app-cont -p 3000:3000 my-node-app:$BUILD_NUMBER
+            sudo docker stop my-node-app-container || true
+            sudo docker rm  my-node-app-container || true
+            sudo docker run -d --name my-node-app-container -p 8000:8000 my-node-app:$BUILD_NUMBER
             sudo docker system prune -a -f
