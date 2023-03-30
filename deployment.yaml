@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-todo-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8000
+  selector:
+    app: node-todo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-todo
+  template:
+    metadata:
+      labels:
+        app: node-todo
+    spec:
+      containers:
+      - name: hello-kubernetes
+        image: 947841444229.dkr.ecr.us-east-2.amazonaws.com/node-image:2683ed16bc3203a671248427780de135b288a3a2
+        ports:
+        - containerPort: 8000
