@@ -1,0 +1,106 @@
+name: Build and push react image to ECR
+
+on:
+  push:
+    branches: ["main"]   
+  
+
+jobs:
+  
+  build:
+    
+    name: Build Image
+    runs-on: ubuntu-latest
+
+   
+    steps:
+
+    - name: Check out code
+      uses: actions/checkout@v2
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-2
+
+    - name: Login to Amazon ECR
+    
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+    
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: node-image
+        IMAGE_TAG: ${{ github.sha }}
+        
+      run: |
+      
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        
+  update-manifest:
+  
+    runs-on: ubuntu-latest 
+    
+    needs: ['build']
+    
+    steps:
+    
+      - uses: actions/checkout@v3
+        with: 
+        
+          ref: 'deployment'
+          token: ${{ secrets.G_TOKEN2 }}
+          
+      - name: setup git config
+      
+        run: |
+          git config --global user.email "chiragdksh@gmail.com"
+          git config --global user.name "vikashkumar0712"
+          echo ${{ github.sha }}
+          sed -i 's+947841444229.dkr.ecr.us-east-2.amazonaws.com/node-image:.*+947841444229.dkr.ecr.us-east-2.amazonaws.com/node-image:${{ github.sha }}+g' deployment.yaml
+          git add -A
+          git commit -m "Update image for - ${{ github.sha }}"
+          
+      - run: echo ${{ github }}
+      - run: git push origin deployment
+      
+  deploy:
+  
+    name: Deploy Image
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+      with: 
+        ref: 'deployment'
+        token: ${{ secrets.G_TOKEN2 }}
+        
+    - name: Download kubectl
+    
+      run: |
+        curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+        chmod +x ./kubectl
+        sudo mv ./kubectl /usr/local/bin/kubectl
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-2
+
+    - name: Update kubectl context
+    
+      run: |
+        aws eks update-kubeconfig --name TestCluster --region us-east-2
+    - name: Deploy React image to EKS cluster
+      run: |
+        kubectl apply -f deployment.yaml
