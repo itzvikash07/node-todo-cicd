@@ -1,9 +1,9 @@
 name: Push-to-EC2
 
 # Trigger deployment only on push to development branch
-on:
-  push:
-    branches: [ master ]
+# on:
+#   push:
+#     branches: [ master ]
 
 jobs:
   deploy:
