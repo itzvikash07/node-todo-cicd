@@ -1,5 +1,5 @@
 
-# Following Steps I have done to deploy NodeJS Application in Docker Container
+# following Steps I have done to deploy NodeJS Application in Docker Container
 
 ### Provisioning The server
 1: 
