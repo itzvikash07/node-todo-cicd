@@ -26,6 +26,6 @@ spec:
     spec:
       containers:
       - name: hello-kubernetes
-        image: 947841444229.dkr.ecr.us-east-2.amazonaws.com/node-image:2683ed16bc3203a671248427780de135b288a3a2
+        image: 947841444229.dkr.ecr.us-east-2.amazonaws.com/node-image:0c115561a9b81424948390020f91549f6135bfa8
         ports:
         - containerPort: 8000
