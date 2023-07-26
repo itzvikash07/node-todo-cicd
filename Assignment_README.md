@@ -48,7 +48,7 @@ sudo ssh -i "path/to/key" ubuntu@<public-ip>
 ### Create the script.sh and Paste the Script
 ```
 sudo vim script.sh
-// Paste the content of script
+// Paste the content of script (deployment.sh)
 ```
 ### Give the executable Permissions to script
 ```
